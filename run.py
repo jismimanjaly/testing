@@ -91,7 +91,7 @@ def buffer_flags():
    for line in gst_log:
         n = n + 1
         if re.search ("flags", line):
-               words = line.split (",")
+               words = line.split ()
                buffer_flags.append (words[-1])
               
    gst_log.close() 
@@ -121,8 +121,10 @@ def buffer_size ():
    for line in gst_log:
         n = n + 1
         if re.search ("size",line):
-                words = line.split(",")
-                buffer_size.append (words[-4])
+                #words = line.split(",")
+                line = line.replace(" " , ":")
+                words = line.split(":")
+                buffer_size.append (words[-7])
    return buffer_size
 
   
@@ -131,7 +133,7 @@ def get_bufferinfo ():
     """ 
     log = open ("log.txt", "r")
     schedule_log = csv.writer(open('schedule_log.csv', 'wb'))
-    Title = [[['Buffer Address']],['Element'],['Buffer PTS'],['Buffer DTS'],['Buffer Duration'],['Buffer Flag'],['Buffer Size'],['Buffer Status']]
+    Title = ['Buffer Address','Element','Buffer PTS','Buffer DTS','Buffer Duration','Buffer Flag','Buffer Size','Buffer Status']
 
     buff_address=buffer_address()
     buff_pts=buffer_pts()
@@ -141,7 +143,10 @@ def get_bufferinfo ():
     buff_flag=buffer_flags ()
     buff_element=buffer_element()
     buff_status=buffer_status()
-    schedule_log.writerows((Title,buff_address,buff_element,buff_pts,buff_dts,buff_dur,buff_flag,buff_size,buff_status))        
+    schedule_log.writerow(Title)
+    
+    for i in range(1,len(buff_status)):
+	schedule_log.writerow((buff_address[i],buff_element[i],buff_pts[i],buff_dts[i],buff_dur[i],buff_flag[i],buff_size[i],buff_status[i]))        
 
 
 
